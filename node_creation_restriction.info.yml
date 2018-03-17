@@ -1,0 +1,5 @@
+name: 'Node Creation Restriction'
+type: module
+description: 'Purpose is to restrict number of nodes to create by user'
+core: 8.x
+package: 'Custom'

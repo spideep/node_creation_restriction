@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * @file
+ * Contains node_creation_restriction.module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\Entity\Node;
+
+/**
+ * {@inheritdoc}
+ */
+function node_creation_restriction_help($route_name, RouteMatchInterface $route_match)
+{
+  switch ($route_name) {
+    // Main module help for the node_creation_restriction module.
+    case 'help.page.node_creation_restriction':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Purpose is to restrict number of nodes to create by user') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function node_creation_restriction_theme()
+{
+  check_authority();
+  return [
+    'node_creation_restriction' => [
+      'render element' => 'children',
+    ],
+  ];
+
+}
+
+/**
+ * Check if current user has authority of other node.
+ */
+function check_authority()
+{
+  $userid = \Drupal::currentUser()->id();
+  $nids = \Drupal::entityQuery('node')
+    ->condition('type', 'article')
+    ->execute();
+  foreach ($nids as $nid) {
+    $authorid = Node::load($nid)->getOwnerId();
+    if ($authorid === $userid) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+
+/**
+ * {@inheritdoc}
+ */
+function node_creation_restriction_form_node_form_alter(&$form, FormStateInterface $form_state)
+{
+  $form['#validate'][] = 'node_creation_resriction_node_form_validate';
+}
+
+/**
+ * {@inheritdoc}
+ */
+function node_creation_resriction_node_form_validate($form, FormStateInterface $form_state)
+{
+  $node = $form_state->getFormObject()->getEntity();
+  if ($node->getType() == 'article') {
+    if (check_authority()) {
+      $form_state->setErrorByName('Restricted node creation', t('This user is already author of an article.'));
+    }
+  }
+}

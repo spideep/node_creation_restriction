@@ -1,0 +1,14 @@
+{
+  "name": "drupal/node_creation_restriction",
+  "type": "drupal-module",
+  "description": "Purpose is to restrict number of nodes to create by user",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/node_creation_restriction",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/node_creation_restriction",
+    "source": "http://cgit.drupalcode.org/node_creation_restriction"
+  },
+  "require": { }
+}
